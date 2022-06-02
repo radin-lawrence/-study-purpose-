@@ -1,0 +1,53 @@
+pipeline{
+   agent { label('build || test') }
+   environment {
+   	DOCKERHUB_CREDENTIALS=credentials('dockerhub')
+   }
+   stages {
+       stage('gitclone') {
+           agent {
+                 label 'build'
+                 }
+   		steps {
+   			git 'https://github.com/radin-lawrence/devops-flask'
+   		}
+   	}
+   	stage('Build') {
+           agent {
+                 label 'build'
+                 }
+   		steps {
+   			sh 'docker build -t radinlawrence/flaskapp:version1 .'
+   		}
+   	}
+   	stage('Login') {
+           agent {
+                 label 'build'
+                 }
+   		steps {
+   			sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+   		}
+   	}
+   	stage('Push') {
+           agent {
+                 label 'build'
+                 }
+   		steps {
+   			sh 'docker push radinlawrence/flaskapp:version1'
+   		}
+   	}
+   	stage('Run docker container'){
+   	    agent {
+                 label 'test'
+                 }
+           steps {
+               sh 'docker run -p 80:5000 -d --name webserver radinlawrence/flaskapp:version1'
+           }
+   	}
+   }
+   post {
+        always {
+   	     	sh 'docker logout'
+   	}
+   }
+}
