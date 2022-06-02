@@ -126,7 +126,7 @@ pipeline{
                   label 'build'
                   }
 			steps {
-				git 'https://github.com/devasivaram/devops-flask-dev'
+				git 'https://github.com/radin-lawrence/devops-flask'
 			}
 		}
 		stage('Build') {
@@ -134,7 +134,7 @@ pipeline{
                   label 'build'
                   }
 			steps {
-				sh 'docker build -t devanandts/flaskapp:version1 .'
+				sh 'docker build -t radinlawrence/flaskapp:version1 .'
 			}
 		}
 		stage('Login') {
@@ -150,7 +150,7 @@ pipeline{
                   label 'build'
                   }
 			steps {
-				sh 'docker push devanandts/flaskapp:version1'
+				sh 'docker push radinlawrence/flaskapp:version1'
 			}
 		}
 		stage('Run docker container'){
@@ -158,7 +158,7 @@ pipeline{
                   label 'test'
                   }
             steps {
-                sh 'docker run -p 80:5000 -d --name webserver devanandts/flaskapp:version1'
+                sh 'docker run -p 80:5000 -d --name webserver radinlawrence/flaskapp:version1'
             }
 		}
 	}
